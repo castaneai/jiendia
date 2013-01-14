@@ -3,7 +3,15 @@ jiendia
 
 Data parser for LaTale Online.
 
-dependencies
+Dependencies
 =============
 
 - pybinary
+
+Usage
+=========
+
+```python
+if __name__ == '__main__':
+	print('a.... sasshi')
+```
