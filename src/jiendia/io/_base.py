@@ -19,6 +19,8 @@ class BaseArchive(object):
         self._stream = stream
         self._mode = mode
         self._encoding = encoding
+        if self._mode in (ArchiveMode.READ, ArchiveMode.UPDATE):
+            self.load()
 
     def __enter__(self):
         return self
@@ -26,6 +28,7 @@ class BaseArchive(object):
     def __exit__(self, *exc):
         if self._mode in (ArchiveMode.CREATE, ArchiveMode.UPDATE):
             self.save()
+        self.close()
         
     def close(self):
         self._stream.close()

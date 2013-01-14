@@ -2,49 +2,21 @@
 import io
 import struct
 import contextlib
+from jiendia.io._base import ArchiveMode, BaseArchive
 
-class SpfArchiveMode(object):
-    READ = 0
-    CREATE = 1
-    UPDATE = 2
-
-class SpfArchive(object):
+class SpfArchive(BaseArchive):
     
-    def __enter__(self):
-        return self
-    
-    def __exit__(self, *exc):
-        if self._mode in (SpfArchiveMode.CREATE, SpfArchiveMode.UPDATE):
-            self._save()
-        self.close()
-        
     def __init__(self, stream, mode, encoding, version = None, archive_number = None):
         self.entries = []
-        self._stream = stream
-        self._mode = mode
-        self._encoding = encoding
         self._entries_dict = {}
-        if self._mode == SpfArchiveMode.CREATE:
+        BaseArchive.__init__(self, stream, mode, encoding)
+        if self._mode == ArchiveMode.CREATE:
             if version is None or archive_number is None:
                 raise RuntimeError('create mode requires `version` and `archive_number`')
             self.version = version
             self.archive_number = archive_number
-        else:
-            self._init()
             
-    def close(self):
-        self._stream.close()
-        
-    def get_entry(self, entry_name):
-        return self._entries_dict[entry_name]
-    
-    def create_entry(self, entry_name):
-        entry = SpfArchiveEntry(self, entry_name)
-        self.entries.append(entry)
-        self._entries_dict[entry_name] = entry
-        return entry
-        
-    def _init(self):
+    def load(self):
         self._stream.seek(-4, io.SEEK_END)
         self.version = struct.unpack('<l', self._stream.read(4))[0]
         self._stream.seek(-136, io.SEEK_END)
@@ -71,8 +43,8 @@ class SpfArchive(object):
             entry = SpfArchiveEntry(self, info['name'], entry_stream)
             self.entries.append(entry)
             self._entries_dict[info['name']] = entry
-        
-    def _save(self):
+                    
+    def save(self):
         self._stream.truncate(0)
         entry_index_stream = io.BytesIO()
         entry_index_struct = struct.Struct('<128s2lh2B')
@@ -92,6 +64,15 @@ class SpfArchive(object):
         self._stream.write(
             struct.pack('<2l128sl', entry_index_length, self.archive_number, b'', self.version)
         )
+
+    def get_entry(self, entry_name):
+        return self._entries_dict[entry_name]
+    
+    def create_entry(self, entry_name):
+        entry = SpfArchiveEntry(self, entry_name)
+        self.entries.append(entry)
+        self._entries_dict[entry_name] = entry
+        return entry
         
 class SpfArchiveEntry(object):
     
@@ -110,15 +91,3 @@ class SpfArchiveEntry(object):
     
     def open(self):
         return self._stream
-
-class SpfArchiveFile(SpfArchive):
-    
-    def __init__(self, file_path, mode, encoding, version = None, archive_number = None):
-        if mode == SpfArchiveMode.CREATE:
-            open_mode = 'wb'
-        elif mode == SpfArchiveMode.READ:
-            open_mode = 'rb'
-        elif mode == SpfArchiveMode.UPDATE:
-            open_mode = 'r+b'
-        stream = open(file_path, open_mode)
-        SpfArchive.__init__(self, stream, mode, encoding, version, archive_number)
