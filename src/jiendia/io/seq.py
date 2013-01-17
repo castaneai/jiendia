@@ -5,7 +5,7 @@ import pybinary.io
 from jiendia.io._base import BaseArchive, ArchiveMode
 
 Frame = collections.namedtuple('Frame', 'number, duration, parts')
-FramePart = collections.namedtuple('FramePart', 'depth, pattern, rotation, x, y, unknown')
+FramePart = collections.namedtuple('FramePart', 'depth, pattern, rotation, x, y, visible, flip')
 
 
 class SeqArchive(BaseArchive):
@@ -37,8 +37,9 @@ class SeqArchive(BaseArchive):
                 rotation = reader.read_int32()
                 x = reader.read_int32()
                 y = reader.read_int32()
-                unknown = reader.read_int32()
-                part = FramePart._make((depth, pattern, rotation, x, y, unknown))
+                visible = reader.read_short()
+                flip = reader.read_short()
+                part = FramePart._make((depth, pattern, rotation, x, y, visible, flip))
                 parts.append(part)
             frame = Frame._make((number, duration, tuple(parts))) 
             self._frames.append(frame)
