@@ -6,7 +6,8 @@ Data parser for LaTale Online.
 Dependencies
 =============
 
-- pybinary
+- pybinary (jiendia.io)
+- sqlalchemy (jiendia.sql)
 
 Usage
 =========
