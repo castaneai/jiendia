@@ -14,7 +14,7 @@ class TblArchive(BaseArchive):
     
     def __init__(self, stream, mode, encoding):
         if not mode == ArchiveMode.READ:
-            raise NotImplementedError('SEQ Archive only supports READ mode')
+            raise NotImplementedError('TBL Archive only supports READ mode')
         self._groups = {}
         BaseArchive.__init__(self, stream, mode, encoding)
         
@@ -50,7 +50,7 @@ class TblArchive(BaseArchive):
                 top = reader.read_int32()
                 right = reader.read_int32()
                 bottom = reader.read_int32()
-                filename = reader.read_string(24).rstrip('\0')
+                filename = reader.read_string(24)
                 self._stream.seek(104, io.SEEK_CUR)
                 rectangle = Rectangle._make((pattern, x, y, axis_x, axis_y, left, top, right, bottom, filename))
                 rectangles.append(rectangle)
