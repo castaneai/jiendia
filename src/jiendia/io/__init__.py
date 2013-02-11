@@ -5,15 +5,13 @@ from jiendia.io.spf import SpfArchive
 from jiendia.io.tbl import TblArchive
 from jiendia.io.seq import SeqArchive
 
-encoding = 'cp932'
-
-def open_archive(path):
-    ext = os.path.splitext(path)[1].lower() 
+def open_archive(path, mode = ArchiveMode.READ, encoding = 'ascii'):
+    ext = os.path.splitext(path)[1].lower()
     if ext == '.spf':
-        return SpfArchive(path, ArchiveMode.READ, encoding)
+        return SpfArchive(path, mode, encoding)
     if ext == '.tbl':
-        return TblArchive(path, ArchiveMode.READ, encoding)
+        return TblArchive(path, mode, encoding)
     if ext == '.seq':
-        return SeqArchive(path, ArchiveMode.READ, encoding)
+        return SeqArchive(path, mode, encoding)
     else:
         raise RuntimeError('Unknown extension {0}'.format(ext))
