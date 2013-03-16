@@ -65,7 +65,7 @@ class LdtArchive(BaseArchive):
         
         column_names = []
         for _ in range(column_count):
-            name = reader.read_string(COLUMN_NAME_LENGTH).lstrip('_')
+            name = reader.read_string(COLUMN_NAME_LENGTH).lstrip('_').replace('-', '_')
             column_names.append(name)
             
         self._stream.seek(DATATYPE_POS, io.SEEK_SET)
