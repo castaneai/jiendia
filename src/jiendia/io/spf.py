@@ -2,20 +2,22 @@
 import io
 import struct
 import contextlib
-from jiendia.io._base import ArchiveMode, BaseArchive
+import jiendia.io.open
+from jiendia.io._base import DEFAULT_MODE, DEFAULT_ENCODING, ArchiveMode, BaseArchive
 
 class SpfArchive(BaseArchive):
     
-    def __init__(self, stream, mode, encoding, version = None, archive_number = None):
-        self._entries_dict = {}
+    def __init__(self, stream, mode = DEFAULT_MODE, encoding = DEFAULT_ENCODING, version = None, archive_number = None):
         if mode == ArchiveMode.CREATE:
             if version is None or archive_number is None:
                 raise RuntimeError('create mode requires `version` and `archive_number`')
-            self.version = version
-            self.archive_number = archive_number
-            
-        BaseArchive.__init__(self, stream, mode, encoding)
-        
+        self.version = version
+        self.archive_number = archive_number
+        super().__init__(stream, mode, encoding)
+
+    def init(self):
+        self._entries_dict = {}
+
     @property    
     def entries(self):
         return self._entries_dict.values()
@@ -57,7 +59,8 @@ class SpfArchive(BaseArchive):
         for count, entry in enumerate(self.entries):
             content_start_pos = self._stream.tell()
             with contextlib.closing(entry.open()) as entry_stream:
-                content_bytes = entry_stream.getvalue()
+                entry_stream.seek(0)
+                content_bytes = entry_stream.read()
             content_len = len(content_bytes)
             
             self._stream.write(content_bytes)
@@ -73,13 +76,18 @@ class SpfArchive(BaseArchive):
 
     def get_entry(self, entry_name):
         return self._entries_dict[entry_name]
+
+    def open_entry(self, entry_name):
+        stream = self.get_entry(entry_name).open()
+        return jiendia.io.open.get_archive_type(entry_name)(stream)
     
     def create_entry(self, entry_name):
         stream = io.BytesIO()
         return self.create_entry_from_stream(entry_name, stream)
     
     def create_entry_from_file(self, entry_name, path):
-        raise NotImplementedError()
+        stream = open(path, 'rb')
+        return self.create_entry_from_stream(entry_name, stream)
     
     def create_entry_from_stream(self, entry_name, stream):
         entry = SpfArchiveEntry(self, entry_name, stream)
@@ -92,6 +100,8 @@ class SpfArchiveEntry(object):
         self.archive = archive
         self.entry_name = entry_name
         self.length = None
+        if not isinstance(stream, io.BufferedIOBase):
+            raise RuntimeError('SPF Archive Entry requires io.BufferedIOBase type.')
         self._stream = stream
     
     def __len__(self):
@@ -101,3 +111,7 @@ class SpfArchiveEntry(object):
     
     def open(self):
         return self._stream
+
+    def close(self):
+        if not self._stream.closed:
+            self._stream.close()
