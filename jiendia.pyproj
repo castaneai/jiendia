@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>eefaeeed-8fdb-4aa9-8d68-0b4bf9682d11</ProjectGuid>
+    <ProjectHome>.\</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>C:\Users\castaneai\Dropbox\Project\pybinary\src\;src</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <InterpreterId>2af0f10d-7135-4994-9156-5d01c9c11b7e</InterpreterId>
+    <InterpreterVersion>3.3</InterpreterVersion>
+    <Name>jiendia</Name>
+    <RootNamespace>jiendia</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="run_test.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="src\jiendia\io\open.py" />
+    <Compile Include="src\jiendia\test\io\io_test.py" />
+    <Compile Include="src\jiendia\test\io\ldt_test.py" />
+    <Compile Include="src\jiendia\test\io\seq_test.py" />
+    <Compile Include="src\jiendia\test\io\spf_test.py" />
+    <Compile Include="src\jiendia\test\io\tbl_test.py" />
+    <Compile Include="src\jiendia\test\io\__init__.py" />
+    <Compile Include="src\jiendia\util.py" />
+    <Compile Include="src\jiendia\__init__.py" />
+    <Compile Include="src\jiendia\io\ldt.py" />
+    <Compile Include="src\jiendia\io\seq.py" />
+    <Compile Include="src\jiendia\io\spf.py" />
+    <Compile Include="src\jiendia\io\tbl.py" />
+    <Compile Include="src\jiendia\io\_base.py" />
+    <Compile Include="src\jiendia\io\__init__.py" />
+    <Compile Include="src\jiendia\sql\ldt.py" />
+    <Compile Include="src\jiendia\sql\__init__.py" />
+    <Compile Include="src\jiendia\sql\normalization\animation_frame.py" />
+    <Compile Include="src\jiendia\sql\normalization\util.py" />
+    <Compile Include="src\jiendia\sql\normalization\__init__.py" />
+    <Compile Include="src\jiendia\sql\normalization\script\item.py" />
+    <Compile Include="src\jiendia\sql\normalization\script\mob.py" />
+    <Compile Include="src\jiendia\sql\normalization\script\__init__.py" />
+    <Content Include="src\jiendia\test\io\data\extractentry_test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src" />
+    <Folder Include="src\jiendia" />
+    <Folder Include="src\jiendia\io" />
+    <Folder Include="src\jiendia\sql" />
+    <Folder Include="src\jiendia\sql\normalization" />
+    <Folder Include="src\jiendia\sql\normalization\script" />
+    <Folder Include="src\jiendia\test\" />
+    <Folder Include="src\jiendia\test\io\" />
+    <Folder Include="src\jiendia\test\io\data\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>
