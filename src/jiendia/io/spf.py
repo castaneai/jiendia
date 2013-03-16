@@ -36,7 +36,7 @@ class SpfArchive(BaseArchive):
         entry_infos = []
         for _ in range(entry_count):
             entry_name, start_pos, content_len = struct.unpack('<128s2l', self._stream.read(136))
-            entry_name = entry_name.strip(b'\x00')[0].decode(self._encoding).replace('\\', '/')
+            entry_name = entry_name.split(b'\x00')[0].decode(self._encoding).replace('\\', '/')
             entry_infos.append({
                 'name': entry_name,
                 'pos': start_pos,
