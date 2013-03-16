@@ -7,14 +7,21 @@ from jiendia.io._base import ArchiveMode, BaseArchive
 class SpfArchive(BaseArchive):
     
     def __init__(self, stream, mode, encoding, version = None, archive_number = None):
-        self.entries = []
         self._entries_dict = {}
-        BaseArchive.__init__(self, stream, mode, encoding)
-        if self._mode == ArchiveMode.CREATE:
+        if mode == ArchiveMode.CREATE:
             if version is None or archive_number is None:
                 raise RuntimeError('create mode requires `version` and `archive_number`')
             self.version = version
             self.archive_number = archive_number
+            
+        BaseArchive.__init__(self, stream, mode, encoding)
+        
+    @property    
+    def entries(self):
+        return self._entries_dict.values()
+            
+    def close(self):
+        BaseArchive.close(self)
             
     def load(self):
         self._stream.seek(-4, io.SEEK_END)
@@ -29,7 +36,7 @@ class SpfArchive(BaseArchive):
         entry_infos = []
         for _ in range(entry_count):
             entry_name, start_pos, content_len = struct.unpack('<128s2l', self._stream.read(136))
-            entry_name = entry_name.rstrip(b'\x00').decode(self._encoding).replace('\\', '/')
+            entry_name = entry_name.strip(b'\x00')[0].decode(self._encoding).replace('\\', '/')
             entry_infos.append({
                 'name': entry_name,
                 'pos': start_pos,
@@ -41,7 +48,6 @@ class SpfArchive(BaseArchive):
             data = self._stream.read(info['len'])
             entry_stream = io.BytesIO(data)
             entry = SpfArchiveEntry(self, info['name'], entry_stream)
-            self.entries.append(entry)
             self._entries_dict[info['name']] = entry
                     
     def save(self):
@@ -69,19 +75,23 @@ class SpfArchive(BaseArchive):
         return self._entries_dict[entry_name]
     
     def create_entry(self, entry_name):
-        entry = SpfArchiveEntry(self, entry_name)
-        self.entries.append(entry)
+        stream = io.BytesIO()
+        return self.create_entry_from_stream(entry_name, stream)
+    
+    def create_entry_from_file(self, entry_name, path):
+        raise NotImplementedError()
+    
+    def create_entry_from_stream(self, entry_name, stream):
+        entry = SpfArchiveEntry(self, entry_name, stream)
         self._entries_dict[entry_name] = entry
         return entry
         
 class SpfArchiveEntry(object):
     
-    def __init__(self, archive, entry_name, stream = None):
+    def __init__(self, archive, entry_name, stream):
         self.archive = archive
         self.entry_name = entry_name
         self.length = None
-        if stream is None:
-            stream = io.BytesIO()
         self._stream = stream
     
     def __len__(self):
