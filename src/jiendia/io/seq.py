@@ -10,11 +10,10 @@ AnimationFramePart = collections.namedtuple('AnimationFramePart', 'depth, patter
 
 class SeqArchive(BaseArchive):
 
-    def __init__(self, stream, mode, encoding):
-        if not mode == ArchiveMode.READ:
+    def init(self):
+        if self._mode != ArchiveMode.READ:
             raise NotImplementedError('SEQ Archive only supports READ mode')
         self._frames = []
-        BaseArchive.__init__(self, stream, mode, encoding)
 
     @property
     def frames(self):

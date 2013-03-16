@@ -12,21 +12,14 @@ RectangleGroup = collections.namedtuple('RectangleGroup',
 
 class TblArchive(BaseArchive):
     
-    def __init__(self, stream, mode, encoding):
-        if not mode == ArchiveMode.READ:
+    def init(self):
+        if not self._mode == ArchiveMode.READ:
             raise NotImplementedError('TBL Archive only supports READ mode')
         self._groups = {}
-        BaseArchive.__init__(self, stream, mode, encoding)
         
     @property
     def groups(self):
-        return self._groups.values()
-    
-    def rectangle(self, item_id):
-        if item_id in self._groups:
-            return self._groups[item_id]
-        else:
-            return None
+        return self._groups
         
     def load(self):
         reader = pybinary.io.BinaryReader(self._stream, self._encoding)

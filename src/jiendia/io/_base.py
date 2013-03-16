@@ -1,12 +1,15 @@
 # -*- coding: utf8 -*-
-class ArchiveMode(object):
+class ArchiveMode:
     READ = 0
     CREATE = 1
     UPDATE = 2
 
-class BaseArchive(object):
+DEFAULT_ENCODING = 'utf8'
+DEFAULT_MODE = ArchiveMode.READ
+
+class BaseArchive:
     
-    def __init__(self, stream, mode, encoding):
+    def __init__(self, stream, mode = DEFAULT_MODE, encoding = DEFAULT_ENCODING):
         '''アーカイブを開く streamにはファイルのパスかioオブジェクトを渡す'''
         if isinstance(stream, (str, bytes)):
             if mode == ArchiveMode.CREATE:
@@ -16,9 +19,13 @@ class BaseArchive(object):
             elif mode == ArchiveMode.UPDATE:
                 open_mode = 'r+b'
             stream = open(stream, open_mode)
+
         self._stream = stream
         self._mode = mode
         self._encoding = encoding
+
+        self.init()
+
         if self._mode in (ArchiveMode.READ, ArchiveMode.UPDATE):
             self.load()
 
@@ -32,6 +39,9 @@ class BaseArchive(object):
         
     def close(self):
         self._stream.close()
+
+    def init(self):
+        pass
         
     def load(self):
         '''既存のストリームからデータ構造を読み取る'''
@@ -39,4 +49,4 @@ class BaseArchive(object):
     
     def save(self):
         '''ストリームに変更を保存する'''
-        raise NotImplementedError()
+        raise NotImplementedError()

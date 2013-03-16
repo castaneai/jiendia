@@ -3,7 +3,7 @@ import io
 import collections
 import pybinary.io
 
-from jiendia.io._base import BaseArchive
+from jiendia.io._base import BaseArchive, ArchiveMode
 
 class ColumnType:
     UNSIGNED_INT = 0
@@ -12,7 +12,7 @@ class ColumnType:
     INT = 3
     FLOAT = 4
     
-class Column(object):
+class Column:
     
     def __init__(self, name, type):
         self._name = name
@@ -41,10 +41,9 @@ class Column(object):
 
 class LdtArchive(BaseArchive):
     
-    def __init__(self, stream, mode, encoding):
+    def init(self):
         self._rows = []
         self._columns = []
-        BaseArchive.__init__(self, stream, mode, encoding)
         
     @property
     def rows(self):
