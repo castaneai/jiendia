@@ -79,7 +79,7 @@ class SpfArchive(BaseArchive):
 
     def open_entry(self, entry_name):
         stream = self.get_entry(entry_name).open()
-        return jiendia.io.open.get_archive_type(entry_name)(stream)
+        return jiendia.io.open.get_archive_type(entry_name)(stream, mode = self._mode, encoding = self._encoding)
     
     def create_entry(self, entry_name):
         stream = io.BytesIO()
