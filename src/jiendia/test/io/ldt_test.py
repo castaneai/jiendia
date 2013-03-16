@@ -6,8 +6,8 @@ def test_read():
     from jiendia.io.ldt import LdtArchive
     with LdtArchive(DATA_DIR + '/ACTION_INTERFACE.LDT', encoding = 'cp932') as ldt:
         first_row = ldt.rows[0]
-        assert first_row.ID == 1
-        assert first_row.Name == '待機'
+        assert first_row['ID'] == 1
+        assert first_row['Name'] == '待機'
         
 def test_sql_export():
     import sqlite3

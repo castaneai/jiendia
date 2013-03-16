@@ -1,6 +1,5 @@
 # -*- coding: utf8 -*-
 import io
-import collections
 import pybinary.io
 
 from jiendia.io._base import BaseArchive, ArchiveMode
@@ -86,18 +85,17 @@ class LdtArchive(BaseArchive):
             
         self._stream.seek(ROWDATA_POS, io.SEEK_SET)
         
-        Row = collections.namedtuple('Row', ','.join([col.name for col in self.columns]))
+        column_names = [column.name for column in self._columns]
         for _ in range(row_count):
-            row = []
+            row = {} 
             for column in self._columns:
                 if column.type in (ColumnType.INT, ColumnType.UNSIGNED_INT, ColumnType.BOOL):
-                    row.append(reader.read_int32())
+                    row[column.name] = reader.read_int32()
                 elif column.type == ColumnType.FLOAT:
-                    row.append(reader.read_float())
+                    row[column.name] = reader.read_float()
                 elif column.type == ColumnType.STRING:
                     str_len = reader.read_short()
-                    row.append(reader.read_string(str_len))
+                    row[column.name] = reader.read_string(str_len)
                 else:
                     raise TypeError('invalid column type: {0}'.format(column.type))
-            row = Row._make(row)
             self._rows.append(row)
