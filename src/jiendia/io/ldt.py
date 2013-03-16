@@ -3,7 +3,7 @@ import io
 import collections
 import pybinary.io
 
-from jiendia.io._base import BaseArchive, ArchiveMode
+from jiendia.io._base import BaseArchive
 
 class ColumnType:
     UNSIGNED_INT = 0
