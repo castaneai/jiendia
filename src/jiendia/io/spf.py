@@ -97,17 +97,25 @@ class SpfArchive(BaseArchive):
 class SpfArchiveEntry(object):
     
     def __init__(self, archive, entry_name, stream):
-        self.archive = archive
-        self.entry_name = entry_name
-        self.length = None
+        self._archive = archive
+        self._entry_name = entry_name
+        self._length = None
         if not isinstance(stream, io.BufferedIOBase):
             raise RuntimeError('SPF Archive Entry requires io.BufferedIOBase type.')
         self._stream = stream
     
     def __len__(self):
-        if self.length is None:
+        if self._length is None:
             return len(self._stream.read())
-        return self.length
+        return self._length
+
+    @property
+    def entry_name(self):
+        return self._entry_name
+
+    @property
+    def archive(self):
+        return self._archive
     
     def open(self):
         return self._stream
