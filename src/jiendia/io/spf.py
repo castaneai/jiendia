@@ -3,7 +3,7 @@ import io
 import struct
 import contextlib
 import jiendia.io.open
-from jiendia.io._base import DEFAULT_MODE, DEFAULT_ENCODING, ArchiveMode, BaseArchive
+from jiendia.io.archive.base import DEFAULT_MODE, DEFAULT_ENCODING, ArchiveMode, BaseArchive
 
 class SpfArchive(BaseArchive):
     

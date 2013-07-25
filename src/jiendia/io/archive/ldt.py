@@ -1,8 +1,7 @@
 # -*- coding: utf8 -*-
 import io
-import pybinary.io
-
-from jiendia.io._base import BaseArchive, ArchiveMode
+from jiendia.io.manipulator import BinaryReader, BinaryWriter
+from jiendia.io.archive.base import BaseArchive
 
 class ColumnType:
     UNSIGNED_INT = 0
@@ -57,7 +56,7 @@ class LdtArchive(BaseArchive):
         ROWDATA_POS = 8716
         COLUMN_NAME_LENGTH = 64
         
-        reader = pybinary.io.BinaryReader(self._stream, self._encoding)
+        reader = BinaryReader(self._stream)
         self._stream.seek(4)
         column_count = reader.read_int32()
         row_count = reader.read_int32()

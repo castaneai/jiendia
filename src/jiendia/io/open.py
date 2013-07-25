@@ -1,10 +1,10 @@
 # -*- coding: utf8 -*-
 import os.path
-from jiendia.io._base import BaseArchive, DEFAULT_MODE, DEFAULT_ENCODING
+from jiendia.io.archive.base import BaseArchive, DEFAULT_MODE, DEFAULT_ENCODING
 from jiendia.io.spf import SpfArchive
 from jiendia.io.tbl import TblArchive
 from jiendia.io.seq import SeqArchive
-from jiendia.io.ldt import LdtArchive
+from jiendia.io.archive.ldt import LdtArchive
 
 def get_archive_type(filename) -> type:
     ext = os.path.splitext(filename)[1].lower()

@@ -2,7 +2,7 @@
 import io
 import collections
 import pybinary.io
-from jiendia.io._base import BaseArchive, ArchiveMode
+from jiendia.io.archive.base import BaseArchive, ArchiveMode
 
 AnimationFrame = collections.namedtuple('AnimationFrame', 'number, duration, parts')
 AnimationFramePart = collections.namedtuple('AnimationFramePart', 'depth, pattern, rotation, x, y, visible, flip')

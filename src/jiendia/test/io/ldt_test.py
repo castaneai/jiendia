@@ -3,7 +3,7 @@ from jiendia.test.io import DATA_DIR
 
 def test_read():
     '''LDTアーカイブの内容を読み取れるかテストする'''
-    from jiendia.io.ldt import LdtArchive
+    from jiendia.io.archive.ldt import LdtArchive
     with LdtArchive(DATA_DIR + '/ACTION_INTERFACE.LDT', encoding = 'cp932') as ldt:
         first_row = ldt.rows[0]
         assert first_row['ID'] == 1
@@ -11,7 +11,7 @@ def test_read():
         
 def test_sql_export():
     import sqlite3
-    from jiendia.io.ldt import LdtArchive
+    from jiendia.io.archive.ldt import LdtArchive
     from jiendia.sql.ldt import ldt2sql
     with LdtArchive(DATA_DIR + '/ACTION_INTERFACE.LDT', encoding = 'cp932') as ldt:
         with sqlite3.connect(DATA_DIR + '/action_interface.sqlite') as conn:

@@ -1,16 +1,18 @@
 # -*- coding: utf8 -*-
 class ArchiveMode:
+    u"""アーカイブを開く際の方式"""
     READ = 0
     CREATE = 1
     UPDATE = 2
 
-DEFAULT_ENCODING = 'utf8'
-DEFAULT_MODE = ArchiveMode.READ
+class BaseArchive(object):
+    u"""特定データを格納したバイナリアーカイブを表すクラス
+    このクラスは抽象クラスなのでこれを継承して個々のアーカイブクラスを作る"""
 
-class BaseArchive:
-    
-    def __init__(self, stream, mode = DEFAULT_MODE, encoding = DEFAULT_ENCODING):
-        '''アーカイブを開く streamにはファイルのパスかioオブジェクトを渡す'''
+    _DEFAULT_MODE = ArchiveMode.READ
+
+    def __init__(self, stream, mode = _DEFAULT_MODE):
+        u"""アーカイブを開く streamにはファイルのパスかioオブジェクトを渡す"""
         if isinstance(stream, (str, bytes)):
             if mode == ArchiveMode.CREATE:
                 open_mode = 'wb'
@@ -22,7 +24,6 @@ class BaseArchive:
 
         self._stream = stream
         self._mode = mode
-        self._encoding = encoding
 
         self.init()
 

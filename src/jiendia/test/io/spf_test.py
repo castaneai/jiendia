@@ -31,7 +31,7 @@ def test_open():
         spf.create_entry_from_file('ACTION_INTERFACE.LDT', DATA_DIR + '/ACTION_INTERFACE.LDT')
         
     from jiendia.io.seq import SeqArchive
-    from jiendia.io.ldt import LdtArchive
+    from jiendia.io.archive.ldt import LdtArchive
     with SpfArchive(DATA_DIR + '/create_test.spf', mode = ArchiveMode.READ, encoding = 'cp932') as spf:
         with spf.open_entry('010_01_01_STAND_R.SEQ') as seq:
             assert type(seq) == SeqArchive

@@ -2,7 +2,7 @@
 import io
 import collections
 import pybinary.io
-from jiendia.io._base import BaseArchive, ArchiveMode
+from jiendia.io.archive.base import BaseArchive, ArchiveMode
 
 Rectangle = collections.namedtuple('Rectangle',
     'pattern, x, y, axis_x, axis_y, left, top, right, bottom, filename')
