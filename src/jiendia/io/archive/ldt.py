@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 import io
-from jiendia.io.manipulator import BinaryReader, BinaryWriter
-from jiendia.io.archive.base import BaseArchive
+from jiendia.io.manipulator import BinaryReader
+from jiendia.io.archive.base import BaseArchive, ArchiveMode
 
 class ColumnType:
     UNSIGNED_INT = 0
@@ -38,55 +38,74 @@ class Column:
             return 'float'
 
 class LdtArchive(BaseArchive):
-    
-    def init(self):
-        self._rows = []
+
+    _DEFAULT_ENCODING = 'utf-8'
+
+    def __init__(self, file, mode = BaseArchive._DEFAULT_MODE, encoding = _DEFAULT_ENCODING):
+        u"""LDTアーカイブを開く
+        LDTは文字列データを含むので文字エンコーディングを指定する必要がある
+        指定しない場合はデフォルトのUTF-8エンコーディングとなる"""
+        BaseArchive.__init__(self, file, mode)
+        self._encoding = encoding
         self._columns = []
-        
-    @property
-    def rows(self):
-        return tuple(self._rows)
-    
+        self._rows = []
+        if mode in (ArchiveMode.READ, ArchiveMode.UPDATE):
+            self._load()
+
     @property
     def columns(self):
         return tuple(self._columns)
-        
-    def load(self):
-        DATATYPE_POS = 8204
-        ROWDATA_POS = 8716
-        COLUMN_NAME_LENGTH = 64
-        
+
+    @property
+    def rows(self):
+        return tuple(self._rows)
+
+    def _load(self):
         reader = BinaryReader(self._stream)
-        self._stream.seek(4)
+        self._stream.seek(4, io.SEEK_SET)
         column_count = reader.read_int32()
         row_count = reader.read_int32()
-        
+
+        self._load_columns(column_count)
+        self._load_rows(row_count)
+
+    def _load_columns(self, column_count):
+        u"""ストリームから列情報を読み取ってself._columnsに書き込む"""
+        POS_COLUMNNAME = 12
+        POS_COLUMNTYPE = 8204
+        COLUMN_NAME_LENGTH = 64
+        reader = BinaryReader(self._stream)
+
+        # 列の名前を読み取る
+        self._stream.seek(POS_COLUMNNAME, io.SEEK_SET)
         column_names = []
         for _ in range(column_count):
-            name = reader.read_string(COLUMN_NAME_LENGTH).lstrip('_').replace('-', '_').replace(' ', '_')
-            if name == 'ID':
-                name = 'ID_'
+            name = reader.read_string(COLUMN_NAME_LENGTH, self._encoding)
             column_names.append(name)
-            
-        self._stream.seek(DATATYPE_POS, io.SEEK_SET)
-        
+
+        # 列の型情報を読み取る
+        self._stream.seek(POS_COLUMNTYPE, io.SEEK_SET)
         column_types = []
         for _ in range(column_count):
             type = reader.read_int32()
             column_types.append(type)
-            
+
+        self._columns = []
         # IDカラムはバイナリには記述されていないが、先頭に存在する
         id_column = Column('ID', ColumnType.INT)
         self._columns.append(id_column)
         for name, type in zip(column_names, column_types):
             column = Column(name, type)
             self._columns.append(column)
-            
-        self._stream.seek(ROWDATA_POS, io.SEEK_SET)
-        
-        column_names = [column.name for column in self._columns]
+
+    def _load_rows(self, row_count):
+        POS_ROWDATA = 8716
+        reader = BinaryReader(self._stream)
+
+        self._stream.seek(POS_ROWDATA, io.SEEK_SET)
+        self._rows = []
         for _ in range(row_count):
-            row = {} 
+            row = {}
             for column in self._columns:
                 if column.type in (ColumnType.INT, ColumnType.UNSIGNED_INT, ColumnType.BOOL):
                     row[column.name] = reader.read_int32()
@@ -94,7 +113,7 @@ class LdtArchive(BaseArchive):
                     row[column.name] = reader.read_float()
                 elif column.type == ColumnType.STRING:
                     str_len = reader.read_short()
-                    row[column.name] = reader.read_string(str_len)
+                    row[column.name] = reader.read_string(str_len, self._encoding)
                 else:
                     raise TypeError('invalid column type: {0}'.format(column.type))
             self._rows.append(row)

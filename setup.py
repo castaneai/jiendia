@@ -6,8 +6,8 @@ setup(
     name = 'jiendia',
     version = '0.1',
     description = 'data parser for LaTale Online.',
-    url = '',
+    url = 'https://github.com/castaneai/jiendia',
     author = 'castaneai',
-    packages = ['jiendia', 'jiendia.io', 'jiendia.sql', 'jiendia.sql.normalization'],
+    packages = ['jiendia', 'jiendia.io', 'jiendia.io.archive'],
     package_dir = {'jiendia': 'src/jiendia'},
 )

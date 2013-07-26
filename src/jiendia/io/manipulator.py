@@ -36,7 +36,9 @@ class BinaryReader(BaseManipulator):
 
     def read_string(self, length, encoding):
         u"""パケットから文字列を文字エンコーディングを考慮して読み取る。
-        ヌル文字が含まれている場合はそこを文字列の終端とする。
+        lengthは文字数ではなくバイト数
+        ヌル文字が含まれている場合はそこを文字列の終端とする。ヌル文字がない場合は
+        最高lengthバイトに達するまで読み込む。
         デコード不可能な文字列はU+FFFD REPLACEMENT CHARACTERに置換される"""
         # TODO: replace以外の選択肢も与えるべき
         data = self._stream.read(length).split(b'\x00')[0]

@@ -1,26 +1,28 @@
 # -*- coding: utf8 -*-
 import io
 import collections
-import pybinary.io
+from jiendia.io.manipulator import BinaryReader
 from jiendia.io.archive.base import BaseArchive, ArchiveMode
 
 AnimationFrame = collections.namedtuple('AnimationFrame', 'number, duration, parts')
 AnimationFramePart = collections.namedtuple('AnimationFramePart', 'depth, pattern, rotation, x, y, visible, flip')
 
-
 class SeqArchive(BaseArchive):
+    u"""キャラクターのアニメーションのフレームを格納したアーカイブ"""
 
-    def init(self):
-        if self._mode != ArchiveMode.READ:
-            raise NotImplementedError('SEQ Archive only supports READ mode')
+    def __init__(self, file, mode = BaseArchive._DEFAULT_MODE):
+        if mode != ArchiveMode.READ:
+            raise NotImplementedError('SEQアーカイブは読み取り専用です')
+        BaseArchive.__init__(self, file, mode)
         self._frames = []
+        self._load()
 
     @property
     def frames(self):
         return tuple(self._frames)
 
-    def load(self):
-        reader = pybinary.io.BinaryReader(self._stream, self._encoding)
+    def _load(self):
+        reader = BinaryReader(self._stream)
         self._stream.seek(12, io.SEEK_SET)
         frame_count = reader.read_int32()
 
