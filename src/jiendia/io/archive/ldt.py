@@ -105,15 +105,15 @@ class LdtArchive(BaseArchive):
         self._stream.seek(POS_ROWDATA, io.SEEK_SET)
         self._rows = []
         for _ in range(row_count):
-            row = {}
+            row = []
             for column in self._columns:
                 if column.type in (ColumnType.INT, ColumnType.UNSIGNED_INT, ColumnType.BOOL):
-                    row[column.name] = reader.read_int32()
+                    row.append(reader.read_int32())
                 elif column.type == ColumnType.FLOAT:
-                    row[column.name] = reader.read_float()
+                    row.append(reader.read_float())
                 elif column.type == ColumnType.STRING:
                     str_len = reader.read_short()
-                    row[column.name] = reader.read_string(str_len, self._encoding)
+                    row.append(reader.read_string(str_len, self._encoding))
                 else:
                     raise TypeError('invalid column type: {0}'.format(column.type))
             self._rows.append(row)
