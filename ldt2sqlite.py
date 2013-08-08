@@ -16,8 +16,11 @@ def create_str_row(row, columns):
             result.append(u'{0}'.format(val))
     return result
 
-def ldt2sqlite(src_file, dst_file):
-    table_name = os.path.basename(src_file).split('.')[0]
+def ldt2sqlite(src_file, dst_file, table_name):
+    u"""LDTファイルのテーブルを読み取って指定したsqliteファイルに書き込む
+    src_file : 読み取るLDTファイルのパスまたはファイルオブジェクト
+    dst_file : 書き込む先のsqliteデータベースファイルのパス
+    table_name : テーブル名(省略時はLDTファイルの拡張子なしファイル名)"""
     with LdtArchive(src_file, encoding = 'cp932') as ldt:
         with sqlite3.connect(dst_file) as conn:
             conn.execute(u'drop table if exists `{0}`'.format(table_name))
@@ -35,8 +38,10 @@ def ldt2sqlite(src_file, dst_file):
                 conn.execute(query)
 
 if __name__ == '__main__':
+    import os
     import sys
     if len(sys.argv) != 3:
         print(u"Usage: python ldt2sqlite.py <source LDT file> <dest SQLite file>")
         exit()
-    ldt2sqlite(sys.argv[1], sys.argv[2])
+    table_name = os.path.basename(sys.argv[1]).split('.')[0]
+    ldt2sqlite(sys.argv[1], sys.argv[2], table_name)
