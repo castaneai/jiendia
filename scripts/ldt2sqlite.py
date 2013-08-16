@@ -2,7 +2,7 @@
 import sys
 import os.path
 import sqlite3
-sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + u'/src'))
+sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + u'/../src'))
 
 from jiendia.io.archive.ldt import LdtArchive
 

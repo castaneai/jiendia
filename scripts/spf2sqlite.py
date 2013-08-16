@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-import ldt2sqlite
 from jiendia.io.archive.spf import SpfArchive
+from scripts import ldt2sqlite
+
 
 def check_ext(filename, ext):
     u"""指定したファイル名が拡張子extであるかどうか調べる
