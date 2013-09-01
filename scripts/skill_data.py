@@ -22,6 +22,7 @@ def get_valid_tree_id_list(row):
         451,
         460,
         501,
+        503, # グランシンフォニアの音符別演奏
         601,
         602,
         603,
@@ -112,7 +113,43 @@ def get_skill_tree_skills(skill_tree_id, rowid_sqlite):
         skills.append(dict(row))
     return skills
 
+def get_special_tree_names():
+    return {
+        226: 'スパイラルソードスキル',
+        1226: '短剣スキル',
+        2226: '短剣スキル',
+        227: '飛燕剣スキル',
+        228: 'ガントレットスキル',
+        229: 'サイキックスキル',
+        230: 'バトルサイズスキル',
+        231: 'タクトスキル',
+        232: 'ローグナイフスキル',
+        233: 'ガンブレイドスキル',
+        234: 'ガーディアンスキル',
+        424: 'ハイランダー専門スキル',
+        425: 'ソードダンサー専門スキル',
+        426: 'ダークナイト専門スキル',
+        427: 'サイキッカー専門スキル',
+        428: 'ファントムメイジ専門スキル',
+        429: 'マエストロ専門スキル',
+        430: 'ローグマスター専門スキル',
+        431: 'ジャッジメント専門スキル',
+        432: 'スターシーカー専門スキル',
+        2736: '特性スキル',
+        2737: '特性スキル',
+        2738: '特性スキル',
+        2739: '特性スキル',
+        2740: '特性スキル',
+        2741: '特性スキル',
+        2742: '特性スキル',
+        2743: '特性スキル',
+        2744: '特性スキル',
+        2745: '特性スキル',
+    }
+
 def get_skill_tree_name(tree_id, sqlite):
+    if tree_id in get_special_tree_names():
+        return get_special_tree_names()[tree_id]
     query = 'select _Name from UI_TOOLTIP where ID = {0}'.format(805780120 + tree_id)
     name_row = sqlite.execute(query).fetchone()
     if name_row is not None:
@@ -128,6 +165,7 @@ def get_skill_tree_name(tree_id, sqlite):
 
 def get_skill_tree(skill_tree_id, rowid_sqlite):
     name = get_skill_tree_name(skill_tree_id, rowid_sqlite)
+    print('id: {0}, name: {1}'.format(skill_tree_id, name))
     return {
         'id': skill_tree_id,
         'name': name,
@@ -158,5 +196,5 @@ if __name__ == '__main__':
             classId = int(sys.argv[2])
             dump_skills(classId, conn)
         else:
-            for classId in range(22, 46):
+            for classId in range(0, 46):
                 dump_skills(classId, conn)
