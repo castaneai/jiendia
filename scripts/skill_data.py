@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 import tempfile
+
 from jiendia.util import get_latale_dir
-from jiendia.io.archive.spf import SpfArchive
+from jiendia.spf import SpfArchive
 from jiendia.io.archive.ldt import LdtArchive
+
 
 def get_ldt(ldt_name):
     with SpfArchive(get_latale_dir() + '/ROWID.SPF') as spf:

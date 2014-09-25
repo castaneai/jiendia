@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from jiendia.io.archive.spf import SpfArchive
+
+from jiendia.spf import SpfArchive
 from scripts import ldt2sqlite
 
 
